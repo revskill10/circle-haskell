@@ -21,6 +21,10 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- mtl
+- servant-server
+- servant
+- wai
 
 library:
   source-dirs: src
@@ -35,6 +39,8 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - my-project
+    - wai
+    - warp
 
 tests:
   my-project-test:
@@ -46,3 +52,6 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - my-project
+    - hspec
+    - hspec-wai
+    - hspec-wai-json

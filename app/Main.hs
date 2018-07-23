@@ -1,6 +1,8 @@
 module Main where
 
-import Lib
+import Lib (app)
+
+import qualified Network.Wai.Handler.Warp as Wai
 
 main :: IO ()
-main = someFunc
+main = Wai.run 3003 Lib.app
