@@ -10,7 +10,8 @@ import Control.Monad.Trans.Reader  (ReaderT, ask, runReaderT)
 import Data.Proxy
 import Network.Wai
 
-type ReaderAPI = "ep1" :> Get '[JSON] Int :<|> "ep2" :> Get '[JSON] String
+type ReaderAPI = "ep1" :> Get '[JSON] Int 
+            :<|> "ep2" :> Get '[JSON] String
 
 type Config = String
 type AppM = ReaderT Config Handler
@@ -18,7 +19,8 @@ type AppM = ReaderT Config Handler
 readerApi = Proxy :: Proxy ReaderAPI
 
 readerServer :: ServerT ReaderAPI AppM
-readerServer = return 1797 :<|> ask
+readerServer = return 1797 
+          :<|> ask
 
 nt :: Config -> AppM a -> Handler a
 nt conf x = runReaderT x conf

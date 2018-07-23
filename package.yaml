@@ -42,7 +42,7 @@ executables:
     - my-project
     - wai
     - warp
-
+ 
 tests:
   my-project-test:
     main:                Spec.hs
