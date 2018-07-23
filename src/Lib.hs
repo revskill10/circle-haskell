@@ -6,19 +6,23 @@ module Lib
 
 import Servant
 import Servant.API
-import Control.Monad.Reader
+import Control.Monad.Trans.Reader  (ReaderT, ask, runReaderT)
 import Data.Proxy
 import Network.Wai
 
 type ReaderAPI = "ep1" :> Get '[JSON] Int :<|> "ep2" :> Get '[JSON] String
 
 type Config = String
+type AppM = ReaderT Config Handler
 
 readerApi = Proxy :: Proxy ReaderAPI
+
+readerServer :: ServerT ReaderAPI AppM
 readerServer = return 1797 :<|> ask
-nt x = return (runReader x "hi")
-mainServer x = hoistServer readerApi (nt x) readerServer :: Server ReaderAPI
+
+nt :: Config -> AppM a -> Handler a
+nt conf x = runReaderT x conf
 
 app :: Config -> Application
-app conf = serve readerApi (mainServer conf)
+app conf = serve readerApi $ hoistServer readerApi (nt conf) readerServer
 
