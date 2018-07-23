@@ -8,7 +8,7 @@ main :: IO ()
 main = hspec spec
 
 spec :: Spec
-spec = with (return app) $ do
+spec = with (return (app "hi")) $ do
   describe "GET /ep1" $ do
     it "responds with 200" $ do
       get "/ep1" `shouldRespondWith` 200

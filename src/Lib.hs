@@ -12,12 +12,13 @@ import Network.Wai
 
 type ReaderAPI = "ep1" :> Get '[JSON] Int :<|> "ep2" :> Get '[JSON] String
 
+type Config = String
 
 readerApi = Proxy :: Proxy ReaderAPI
 readerServer = return 1797 :<|> ask
 nt x = return (runReader x "hi")
-mainServer = hoistServer readerApi nt readerServer :: Server ReaderAPI
+mainServer x = hoistServer readerApi (nt x) readerServer :: Server ReaderAPI
 
-app :: Application
-app = serve readerApi mainServer
+app :: Config -> Application
+app conf = serve readerApi (mainServer conf)
 
