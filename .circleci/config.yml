@@ -32,8 +32,8 @@ jobs:
       - run: sudo mkdir -p /nix
       - run: sudo chown circleci /nix
       - run: curl https://nixos.org/nix/install | sh
-      - run: echo "source /home/circleci/.nix-profile/etc/profile.d/nix.sh" >> ~/.circlerc
-      - run: cd client && nix-build
+      - run: echo "source /home/circleci/.nix-profile/etc/profile.d/nix.sh" >> ~/.bash_profile
+      - run: source ~/.bash_profile && cd client && nix-build
 workflows:
   version: 2
   build_and_test:
