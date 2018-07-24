@@ -27,7 +27,7 @@ dependencies:
 library:
   source-dirs: 
   - core
-  - shared
+  - client/shared
   dependencies:
   - mtl
   - servant

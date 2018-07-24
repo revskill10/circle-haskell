@@ -12,6 +12,7 @@ import Servant.Auth.Server
 import Data.Aeson (ToJSON, FromJSON)
 import GHC.Generics (Generic)
 import Control.Monad.IO.Class (liftIO)
+import API(test)
 
 type ReaderAPI = "ep1" :> Get '[JSON] Int 
             :<|> "ep2" :> Get '[JSON] String

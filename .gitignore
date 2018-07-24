@@ -2,3 +2,7 @@
 my-project.cabal
 build/
 *~
+client/*.js
+client/dist
+client/result
+.DS_Store
