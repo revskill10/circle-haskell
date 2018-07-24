@@ -32,7 +32,7 @@ jobs:
       - run: sudo mkdir -p /nix
       - run: sudo chown circleci /nix
       - run: curl https://nixos.org/nix/install | sh
-      - run: . /home/circleci/.nix-profile/etc/profile.d/nix.sh
+      - run: source /home/circleci/.nix-profile/etc/profile.d/nix.sh
       - run: cd client && nix-build
 workflows:
   version: 2
