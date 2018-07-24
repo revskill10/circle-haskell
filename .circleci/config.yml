@@ -25,8 +25,18 @@ jobs:
           keys: stack-{{checksum "stack.yaml"}}-{{checksum "package.yaml"}}
           paths:
             - ".stack-work"
+  build_client:
+    machine: true
+    steps:
+      - checkout
+      - run: sudo mkdir -p /nix
+      - run: sudo chown ubuntu /nix
+      - run: curl https://nixos.org/nix/install | sh
+      - run: echo "source ~/.nix-profile/etc/profile.d/nix.sh" >> ~/.circlerc
+      - run: cd client && nix-build
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build_project
+      - build_client
