@@ -6,7 +6,6 @@ module Lib
 
 import Servant
 import Servant.API
-import Control.Monad.Trans.Reader  (ReaderT, ask, runReaderT)
 import Data.Proxy
 import Network.Wai
 import Servant.Auth.Server
@@ -48,9 +47,6 @@ checkCreds cookieSettings jwtSettings (Login "Ali Baba" "Open Sesame") = do
      Nothing           -> throwError err401
      Just applyCookies -> return $ applyCookies NoContent
 checkCreds _ _ _ = throwError err401
-
-type Config = String
-type AppM = ReaderT Config Handler
 
 data Login = Login { username :: String, password :: String }
   deriving (Eq, Show, Read, Generic)

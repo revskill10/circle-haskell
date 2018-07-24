@@ -25,10 +25,11 @@ dependencies:
 - servant-auth-server
 
 library:
-  source-dirs: src
+  source-dirs: 
+  - src
+  - shared
   dependencies:
   - mtl
-  - transformers
   - servant
   - wai
   - servant-auth
@@ -60,8 +61,6 @@ tests:
     - hspec-wai
     - hspec-wai-json
     - http-types
-    - servant-server
-    - servant-auth-server
     - jose
     - text
     - bytestring
