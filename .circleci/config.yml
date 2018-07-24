@@ -30,7 +30,7 @@ jobs:
     steps:
       - checkout
       - run: sudo mkdir -p /nix
-      - run: sudo chown ubuntu /nix
+      - run: sudo chown circleci /nix
       - run: curl https://nixos.org/nix/install | sh
       - run: echo "source ~/.nix-profile/etc/profile.d/nix.sh" >> ~/.circlerc
       - run: cd client && nix-build
