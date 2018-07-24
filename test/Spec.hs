@@ -14,15 +14,15 @@ import qualified Data.Text.Encoding as TE
 import qualified Data.String as DS
 import qualified Data.ByteString.Char8 as BC
 import qualified Data.ByteString.Lazy as BL
-import Control.Monad.Reader
+import Test.Hspec.Wai.Matcher
 
 main :: IO ()
 main = do
   myKey <- generateKey
-  hspec (spec myKey)
+  hspec (spec "hi" myKey)
 
 headers :: BL.ByteString -> [Header]
-headers jwt= [
+headers jwt = [
     (hAuthorization, BC.pack "Bearer " <> BL.toStrict jwt )
   ]
 
@@ -35,15 +35,25 @@ mkHeaders user jwtCfg = do
     Left _ -> return $ headers ""
     Right jwt -> return $ headers jwt
 
-spec :: JWK  -> Spec
-spec myKey = do
+spec :: String -> JWK  -> Spec
+spec dbConf myKey = do
   let jwtCfg = defaultJWTSettings myKey
       cfg = defaultCookieSettings :. jwtCfg :. EmptyContext
-  with (return (app jwtCfg cfg)) $
-    describe "GET /ep1" $ do
+  with (return (app dbConf jwtCfg cfg)) $
+    describe "Protected API" $ do
       it "responds with 401" $ do
         header <- liftIO $ mkHeaders invalidUser jwtCfg
         (request methodGet  "/ep1" header "") `shouldRespondWith` 401
       it "responds with 200" $ do
         header <- liftIO $ mkHeaders validUser jwtCfg
         (request methodGet  "/ep1" header "") `shouldRespondWith` 200
+      it "responds with 1797" $ do
+        header <- liftIO $ mkHeaders validUser jwtCfg
+        (request methodGet  "/ep1" header "") `shouldRespondWith` "1797"
+      it   "responds with 200" $ do
+        header <- liftIO $ mkHeaders validUser jwtCfg
+        (request methodGet  "/ep2" header "") `shouldRespondWith` 200
+      it "responds with usernamehi" $ do
+        header <- liftIO $ mkHeaders validUser jwtCfg
+        let expected = bodyEquals (DS.fromString . show $ (name validUser <> "hi"))
+        request methodGet  "/ep2" header "" `shouldRespondWith` (ResponseMatcher 200 [] expected)

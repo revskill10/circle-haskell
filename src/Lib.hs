@@ -27,7 +27,7 @@ type Unprotected =
 
 type API auths = (Auth auths User :> ReaderAPI) :<|> Unprotected
 
-api = Proxy :: Proxy (API '[JWT])
+api = Proxy :: Proxy (API '[JWT, Cookie])
 
 unprotected :: CookieSettings -> JWTSettings -> Server Unprotected
 unprotected cs jwts = checkCreds cs jwts :<|> serveDirectoryFileServer "example/static"
@@ -42,7 +42,7 @@ checkCreds cookieSettings jwtSettings (Login "Ali Baba" "Open Sesame") = do
    -- Usually you would ask a database for the user info. This is just a
    -- regular servant handler, so you can follow your normal database access
    -- patterns (including using 'enter').
-   let usr = User "Ali Baba" "ali@email.com"
+   let usr = User "alice" "alice@gmail.com"
    mApplyCookies <- liftIO $ acceptLogin cookieSettings jwtSettings usr
    case mApplyCookies of
      Nothing           -> throwError err401
@@ -69,16 +69,19 @@ instance FromJSON Login
 checkJWT (User "alice" "alice@gmail.com") = True
 checkJWT _ = False
 
-readerServer :: AuthResult User -> Server ReaderAPI
-readerServer (Authenticated user) = if (checkJWT user) then (return 1797) :<|> (return (name user)) else throwAll err401
-readerServer _ = throwAll err401          
+-- readerServer :: AuthResult User -> Server ReaderAPI
+readerServer xs (Authenticated user) = 
+  if (checkJWT user) 
+  then (return 1797) :<|> (return (name user <> xs)) 
+  else throwAll err401
+readerServer xs _ = throwAll err401          
 
-server :: CookieSettings -> JWTSettings -> Server (API auths)
-server cs jwts =  (readerServer) :<|>  (unprotected cs jwts)
+-- server :: CookieSettings -> JWTSettings -> ReaderT String (Server (API auths))
+server dbConf cs jwts = (readerServer dbConf) :<|> (unprotected cs jwts)
 
-nt :: Config -> AppM a -> Handler a
-nt conf x = runReaderT x conf
+-- nt :: Config -> AppM a -> Handler a
+--nt conf x = runReaderT x conf
 
 -- app :: Config -> Application
-app jwtCfg cfg = serveWithContext api cfg (server defaultCookieSettings jwtCfg) --hoistServer api (nt conf) server
+app dbConf jwtCfg cfg = serveWithContext api cfg (server dbConf defaultCookieSettings jwtCfg)--hoistServer api (nt conf) server
 

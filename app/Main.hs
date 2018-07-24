@@ -8,6 +8,7 @@ import qualified Network.Wai.Handler.Warp as Wai
 main :: IO ()
 main = do
     myKey <- generateKey
+    dbConf <- return ("hi")
     let jwtCfg = defaultJWTSettings myKey
         cfg = defaultCookieSettings :. jwtCfg :. EmptyContext
-    Wai.run 3003 (Lib.app jwtCfg cfg)
+    Wai.run 3003 (Lib.app dbConf jwtCfg cfg)

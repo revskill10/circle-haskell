@@ -21,17 +21,18 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
-- mtl
-- transformers
 - servant-server
-- servant
-- wai
-- servant-auth
 - servant-auth-server
-- aeson
 
 library:
   source-dirs: src
+  dependencies:
+  - mtl
+  - transformers
+  - servant
+  - wai
+  - servant-auth
+  - aeson
 
 executables:
   my-project-exe:
@@ -43,7 +44,6 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - my-project
-    - wai
     - warp
  
 tests:
