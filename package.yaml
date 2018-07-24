@@ -26,6 +26,9 @@ dependencies:
 - servant-server
 - servant
 - wai
+- servant-auth
+- servant-auth-server
+- aeson
 
 library:
   source-dirs: src
@@ -56,3 +59,9 @@ tests:
     - hspec
     - hspec-wai
     - hspec-wai-json
+    - http-types
+    - servant-server
+    - servant-auth-server
+    - jose
+    - text
+    - bytestring
