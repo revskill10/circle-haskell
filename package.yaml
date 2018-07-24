@@ -26,7 +26,7 @@ dependencies:
 
 library:
   source-dirs: 
-  - src
+  - core
   - shared
   dependencies:
   - mtl
@@ -38,7 +38,7 @@ library:
 executables:
   my-project-exe:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs:         server
     ghc-options:
     - -threaded
     - -rtsopts
