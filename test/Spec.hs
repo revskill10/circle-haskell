@@ -65,3 +65,6 @@ spec dbConf myKey = do
         request methodPost "/login" jsonHeader [json|{username: "truong", password: "dung"}|] `shouldRespondWith` 204
       it "fails login" $ do
         request methodPost "/login" jsonHeader [json|{username: "truong1", password: "dung"}|] `shouldRespondWith` 401
+      it "fails login with malformed request" $ do
+        request methodPost "/login" jsonHeader "" `shouldRespondWith` 400
+        request methodPost "/login" jsonHeader [json|{username: "truong1"}|] `shouldRespondWith` 400
