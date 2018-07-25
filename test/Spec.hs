@@ -21,9 +21,11 @@ main = do
   myKey <- generateKey
   hspec (spec "hi" myKey)
 
+bearerType jwt = BC.pack "Bearer " <> BL.toStrict jwt
+
 headers :: BL.ByteString -> [Header]
 headers jwt = [
-    (hAuthorization, BC.pack "Bearer " <> BL.toStrict jwt )
+    (hAuthorization,  bearerType jwt)
   ]
 
 jsonHeader = [

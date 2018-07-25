@@ -66,15 +66,22 @@ instance FromJWT User
 instance ToJSON Login
 instance FromJSON Login
 
-checkJWT (User "alice" "alice@gmail.com") = True
-checkJWT _ = False
+checkJWT :: MonadIO m => User -> m (Maybe Bool)
+checkJWT (User "alice" "alice@gmail.com") = return $ Just True
+checkJWT _ = return Nothing
 
 -- readerServer :: AuthResult User -> Server ReaderAPI
-readerServer xs (Authenticated user) = 
-  if (checkJWT user) 
-  then (return 1797) :<|> (return (name user <> xs)) 
-  else throwAll err401
-readerServer xs _ = throwAll err401          
+readerServer xs (Authenticated user) =
+  withLog user (return 1797) :<|> withLog user (return (name user <> xs)) 
+  where
+    withLog user action = do
+      usr <- liftIO $ checkJWT user
+      -- liftIO $ print user
+      case usr of
+        Just True -> action
+        _ -> throwError err401
+    
+readerServer xs a@(_) = throwAll err401          
 
 -- server :: CookieSettings -> JWTSettings -> ReaderT String (Server (API auths))
 server dbConf cs jwts = (readerServer dbConf) :<|> (unprotected cs jwts)
