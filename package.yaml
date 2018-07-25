@@ -21,26 +21,30 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
-- mtl
-- transformers
 - servant-server
-- servant
-- wai
+- servant-auth-server
 
 library:
-  source-dirs: src
+  source-dirs: 
+  - core
+  - client/shared
+  dependencies:
+  - mtl
+  - servant
+  - wai
+  - servant-auth
+  - aeson
 
 executables:
   my-project-exe:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs:         server
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
     - my-project
-    - wai
     - warp
  
 tests:
@@ -56,3 +60,7 @@ tests:
     - hspec
     - hspec-wai
     - hspec-wai-json
+    - http-types
+    - jose
+    - text
+    - bytestring
