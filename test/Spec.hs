@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, FlexibleContexts #-}
+{-# LANGUAGE OverloadedStrings, FlexibleContexts, QuasiQuotes #-}
 import Lib (app, User(..))
 import Test.Hspec
 import Test.Hspec.Wai
@@ -25,6 +25,10 @@ headers :: BL.ByteString -> [Header]
 headers jwt = [
     (hAuthorization, BC.pack "Bearer " <> BL.toStrict jwt )
   ]
+
+jsonHeader = [
+    (hContentType, "application/json")
+  ]  
 
 validUser = User "alice" "alice@gmail.com"
 invalidUser = User "test" "fdsfd@fdsfd.com"
@@ -57,3 +61,7 @@ spec dbConf myKey = do
         header <- liftIO $ mkHeaders validUser jwtCfg
         let expected = bodyEquals (DS.fromString . show $ (name validUser <> "hi"))
         request methodGet  "/ep2" header "" `shouldRespondWith` (ResponseMatcher 200 [] expected)
+      it "succeed login" $ do
+        request methodPost "/login" jsonHeader [json|{username: "truong", password: "dung"}|] `shouldRespondWith` 204
+      it "fails login" $ do
+        request methodPost "/login" jsonHeader [json|{username: "truong1", password: "dung"}|] `shouldRespondWith` 401

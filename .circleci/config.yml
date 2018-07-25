@@ -39,4 +39,4 @@ workflows:
   build_and_test:
     jobs:
       - build_project
-      - build_client
+      #- build_client

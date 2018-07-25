@@ -11,7 +11,7 @@ import Network.Wai
 import Servant.Auth.Server
 import Data.Aeson (ToJSON, FromJSON)
 import GHC.Generics (Generic)
-import Control.Monad.IO.Class (liftIO)
+import Control.Monad.IO.Class (liftIO, MonadIO)
 import API(test)
 
 type ReaderAPI = "ep1" :> Get '[JSON] Int 
@@ -38,16 +38,19 @@ checkCreds :: CookieSettings
            -> Handler (Headers '[ Header "Set-Cookie" SetCookie
                                 , Header "Set-Cookie" SetCookie]
                                NoContent)
-checkCreds cookieSettings jwtSettings (Login "Ali Baba" "Open Sesame") = do
-   -- Usually you would ask a database for the user info. This is just a
-   -- regular servant handler, so you can follow your normal database access
-   -- patterns (including using 'enter').
-   let usr = User "alice" "alice@gmail.com"
-   mApplyCookies <- liftIO $ acceptLogin cookieSettings jwtSettings usr
-   case mApplyCookies of
-     Nothing           -> throwError err401
-     Just applyCookies -> return $ applyCookies NoContent
-checkCreds _ _ _ = throwError err401
+checkCreds cookieSettings jwtSettings login = do
+  user <- liftIO $ authenticate login
+  case user of
+    Nothing -> throwError err401
+    Just usr -> do
+      mApplyCookies <- liftIO $ acceptLogin cookieSettings jwtSettings usr
+      case mApplyCookies of
+        Nothing           -> throwError err401
+        Just applyCookies -> return $ applyCookies NoContent
+
+authenticate :: MonadIO m => Login -> m (Maybe User)
+authenticate (Login "truong" "dung") = pure $ Just (User "alice" "alice@gmail.com")
+authenticate _ = pure Nothing
 
 data Login = Login { username :: String, password :: String }
   deriving (Eq, Show, Read, Generic)
