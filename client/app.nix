@@ -1,4 +1,4 @@
-{ mkDerivation, base, miso, stdenv }:
+{ mkDerivation, base, miso, stdenv, cabal-install }:
 mkDerivation {
   pname = "app";
   version = "0.1.0.0";

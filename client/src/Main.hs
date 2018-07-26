@@ -8,7 +8,6 @@ module Main where
 -- | Miso framework import
 import Miso
 import Miso.String
-import API (test)
 import Data.Monoid ((<>))
 -- | Type synonym for an application model
 type Model = Int
@@ -39,7 +38,7 @@ updateModel AddOne m = noEff (m + 1)
 updateModel SubtractOne m = noEff (m - 1)
 updateModel NoOp m = noEff m
 updateModel SayHelloWorld m = m <# do
-  putStrLn ("Hello World 1" <> test) >> pure NoOp
+  putStrLn ("Hello World 1") >> pure NoOp
 
 -- | Constructs a virtual DOM from a model
 viewModel :: Model -> View Action

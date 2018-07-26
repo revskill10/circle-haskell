@@ -34,6 +34,16 @@ library:
   - wai
   - servant-auth
   - aeson
+  - lucid
+  - miso
+  - text
+  - hedis
+  - selda
+  - selda-sqlite
+  - selda-postgresql
+  - bloodhound
+  - template-haskell
+  - exceptions
 
 executables:
   my-project-exe:
@@ -64,3 +74,5 @@ tests:
     - jose
     - text
     - bytestring
+    - lucid
+    
