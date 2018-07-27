@@ -7,14 +7,12 @@ jobs:
       - checkout
       - restore-cache:
         keys:
-          - stack-work-{{checksum "stack.yaml"}}-\
-                       {{checksum "package.yaml"}}
+          - stack-work-{{checksum "stack.yaml"}}-{{checksum "package.yaml"}}
       - run: stack setup
       - run: stack build
       - run: stack test
       - save_cache:
-        key: stack-work-{{checksum "stack.yaml"}}-\
-                        {{checksum "package.yaml"}}
+        key: stack-work-{{checksum "stack.yaml"}}-{{checksum "package.yaml"}}
         paths:
           - “.stack-work”
   build_client:
