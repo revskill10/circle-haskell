@@ -13,7 +13,7 @@ jobs:
       - run: stack build
       - run: stack test
       - save_cache:
-        key: stack-work-{{checksum “stack.yaml”}}-\
+        key: stack-work-{{checksum "stack.yaml"}}-\
                         {{checksum "package.yaml"}}
         paths:
           - “.stack-work”
