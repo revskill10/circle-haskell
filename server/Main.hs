@@ -11,6 +11,7 @@ main = do
     myKey <- generateKey
     let dbConf = "hi"
         jwtCfg = defaultJWTSettings myKey
-        cfg = defaultCookieSettings{cookieXsrfSetting= Nothing} :. jwtCfg :. EmptyContext
+        cookieCfg = defaultCookieSettings
+        cfg = cookieCfg :. jwtCfg :. EmptyContext
         devEnv = getEnv "DEVELOPMENT"
-    Wai.run 3003 (Lib.app devEnv dbConf jwtCfg cfg)
+    Wai.run 3003 (Lib.app devEnv dbConf cookieCfg jwtCfg cfg)

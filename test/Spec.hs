@@ -50,8 +50,9 @@ mkHeaders user jwtCfg = do
 spec :: String -> JWK  -> Spec
 spec dbConf myKey = do
   let jwtCfg = defaultJWTSettings myKey
-      cfg = defaultCookieSettings :. jwtCfg :. EmptyContext
-  with (return (app (getEnv "TEST") dbConf jwtCfg cfg)) $
+      cookieCfg = defaultCookieSettings
+      cfg = cookieCfg :. jwtCfg :. EmptyContext
+  with (return (app (getEnv "TEST") dbConf cookieCfg jwtCfg cfg)) $
     describe "Protected API" $ do
       it "responds with 401" $ do
         header <- liftIO $ mkHeaders invalidUser jwtCfg
