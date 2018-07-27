@@ -1,32 +1,22 @@
 version: 2
 jobs:
   build_project:
-    machine: true
+    docker:
+      - image: haskell:8.4.3
     steps:
       - checkout
       - restore-cache:
-          keys:
-            - stack-{{ checksum "stack.yaml" }}
-      - restore-cache:
-          keys:
-            - stack-{{checksum "stack.yaml"}}-{{checksum "package.yaml"}}
-      - run: wget https://github.com/commercialhaskell/stack/releases/download/v1.7.1/stack-1.7.1-linux-x86_64.tar.gz -O /tmp/stack.tar.gz
-      - run: sudo mkdir /tmp/stack-download
-      - run: sudo tar -xzf /tmp/stack.tar.gz -C /tmp/stack-download
-      - run: sudo chmod +x /tmp/stack-download/stack-1.7.1-linux-x86_64/stack
-      - run: sudo mv /tmp/stack-download/stack-1.7.1-linux-x86_64/stack /usr/bin/stack   
-      - run: sudo apt-get update
-      - run: sudo apt-get install postgresql-client-9.6
+        keys:
+          - stack-work-{{checksum "stack.yaml"}}-\
+                       {{checksum "package.yaml"}}
       - run: stack setup
+      - run: stack build
       - run: stack test
-      - save-cache:
-          key: stack-{{ checksum "stack.yaml" }}
-          paths:
-            - "~/.stack"
-      - restore-cache:
-          keys: stack-{{checksum "stack.yaml"}}-{{checksum "package.yaml"}}
-          paths:
-            - ".stack-work"
+      - save_cache:
+        key: stack-work-{{checksum “stack.yaml”}}-\
+                        {{checksum "package.yaml"}}
+        paths:
+          - “.stack-work”
   build_client:
     machine: true
     steps:
