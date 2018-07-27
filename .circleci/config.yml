@@ -11,6 +11,7 @@ jobs:
       - checkout
       - restore-cache:
           keys: stack-work-{{checksum "stack.yaml"}}-{{checksum "package.yaml"}}  
+      - run: apt-get update --asume-yes
       - run: apt-get install --assume-yes curl gcc libgmp-dev libpq-dev make xz-utils zlib1g-dev          
       - run: stack setup
       - run: stack build
