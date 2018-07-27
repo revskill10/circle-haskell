@@ -25,14 +25,6 @@ import           Servant.API
 import           Servant.Auth.Server
 
 
-
-type ReaderAPI = "ep1" :> Get '[JSON] Int
-            :<|> "ep2" :> Get '[JSON] String
-
--- type WebsocketsAPI = Capture "session_id" SessionId :> "questions" :> Raw
-
---websocketsAPI :: Proxy WebsocketsAPI
---websocketsAPI = Proxy
 type HtmlRoutes = ToServerRoutes ViewRoutes HtmlPage Action
 type ViewRoutes = Home
 data Action = NoOp
@@ -67,34 +59,28 @@ instance L.ToHtml a => L.ToHtml (HtmlPage a) where
           ]
       L.body_ (L.toHtml x)
 
-type Unprotected =
-    "login" :>
-      (ReqBody '[JSON] Login
-        :> PostNoContent '[JSON] (Headers '[ Header "Set-Cookie" SetCookie
-                                           , Header "Set-Cookie" SetCookie]
-                                  NoContent)
-      )
-      :<|> Raw
 
-type API auths (env :: Env)
-  = (Auth auths User :> (ReaderAPI
-                    :<|> HtmlRoutes)
-    )
-    :<|> Unprotected
 
 api Development = Proxy :: Proxy (API '[JWT, Cookie] 'Development)
 api Test        = Proxy :: Proxy (API '[JWT, Cookie] 'Test)
 api Production  = Proxy :: Proxy (API '[JWT, Cookie] 'Production)
 
-unprotected :: CookieSettings -> JWTSettings -> Server Unprotected
+
+
+type UnprotectedAPI =
+  "login" :> LoginAPI :<|> Raw
+
+unprotected :: CookieSettings -> JWTSettings -> Server UnprotectedAPI
 unprotected cs jwts = checkCreds cs jwts :<|> serveDirectoryFileServer "client/static"
 
+
+type LoginAPI = ReqBody '[JSON] Login
+              :> PostNoContent '[JSON] (Headers '[ Header "Set-Cookie" SetCookie
+                                   , Header "Set-Cookie" SetCookie]
+                          NoContent)
 checkCreds :: CookieSettings
            -> JWTSettings
-           -> Login
-           -> Handler (Headers '[ Header "Set-Cookie" SetCookie
-                                , Header "Set-Cookie" SetCookie]
-                               NoContent)
+           -> Server LoginAPI
 checkCreds cookieSettings jwtSettings login = do
   user <- liftIO $ authenticate login
   case user of
@@ -128,9 +114,14 @@ checkJWT (User "alice" "alice@gmail.com") = return $ Just True
 checkJWT _                                = return Nothing
 
 
+type ProtectedAPI = (ReaderAPI :<|> HtmlRoutes)
+protectedServer :: String -> AuthResult User -> Server ProtectedAPI
 protectedServer xs a =
   readerServer xs a :<|> htmlServer xs a
--- readerServer :: AuthResult User -> Server ReaderAPI
+
+type ReaderAPI = "ep1" :> Get '[JSON] Int
+            :<|> "ep2" :> Get '[JSON] String
+readerServer :: String -> AuthResult User -> Server ReaderAPI
 readerServer xs (Authenticated user) =
   withLog user (return 1797) :<|> withLog user (return (_name user <> xs))
   where
@@ -147,12 +138,16 @@ htmlServer xs user = homeHtmlServer
   where homeHtmlServer =
           pure $ MkHtmlPage (MkMeta "KMS") "Home"
 
--- server :: CookieSettings -> JWTSettings -> ReaderT String (Server (API auths))
-server dbConf cs jwts = protectedServer dbConf :<|> unprotected cs jwts
 
+type API auths (env :: Env)
+  = Auth auths User :> ProtectedAPI :<|> UnprotectedAPI
+server :: String -> CookieSettings -> JWTSettings -> Server (API auths env)
+server dbConf cs jwts = protectedServer dbConf :<|> unprotected cs jwts
 -- nt :: Config -> AppM a -> Handler a
 --nt conf x = runReaderT x conf
-
--- app :: Config -> Application
+app
+  :: (HasContextEntry context CookieSettings,
+      HasContextEntry context JWTSettings) =>
+     Env -> String -> JWTSettings -> Context context -> Application
 app env dbConf jwtCfg cfg = serveWithContext (api env) cfg (server dbConf defaultCookieSettings jwtCfg)--hoistServer api (nt conf) server
 
