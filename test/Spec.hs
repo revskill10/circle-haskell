@@ -52,24 +52,24 @@ spec dbConf myKey = do
   let jwtCfg = defaultJWTSettings myKey
       cookieCfg = defaultCookieSettings
       cfg = cookieCfg :. jwtCfg :. EmptyContext
-  with (return (app (getEnv "TEST") dbConf cookieCfg jwtCfg cfg)) $
+  with (return (app cookieCfg jwtCfg cfg)) $
     describe "Protected API" $ do
       it "responds with 401" $ do
         header <- liftIO $ mkHeaders invalidUser jwtCfg
-        request methodGet  "/ep1" header "" `shouldRespondWith` 401
+        request methodGet  "/api/ep1" header "" `shouldRespondWith` 401
       it "responds with 200" $ do
         header <- liftIO $ mkHeaders validUser jwtCfg
-        request methodGet  "/ep1" header "" `shouldRespondWith` 200
+        request methodGet  "/api/ep1" header "" `shouldRespondWith` 200
       it "responds with 1797" $ do
         header <- liftIO $ mkHeaders validUser jwtCfg
-        request methodGet  "/ep1" header "" `shouldRespondWith` "1797"
+        request methodGet  "/api/ep1" header "" `shouldRespondWith` "1797"
       it   "responds with 200" $ do
         header <- liftIO $ mkHeaders validUser jwtCfg
-        request methodGet  "/ep2" header "" `shouldRespondWith` 200
+        request methodGet  "/api/ep2" header "" `shouldRespondWith` 200
       it "responds with usernamehi" $ do
         header <- liftIO $ mkHeaders validUser jwtCfg
-        let expected = bodyEquals (DS.fromString . show $ (_name validUser <> "hi"))
-        request methodGet  "/ep2" header "" `shouldRespondWith` ResponseMatcher 200 [] expected
+        let expected = bodyEquals (DS.fromString . show $ _name validUser)
+        request methodGet  "/api/ep2" header "" `shouldRespondWith` ResponseMatcher 200 [] expected
       it "succeed login" $
         request methodPost "/login" jsonHeader [json|{username: "truong", password: "dung"}|] `shouldRespondWith` 204
       it "fails login" $
