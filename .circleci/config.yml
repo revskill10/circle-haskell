@@ -3,11 +3,14 @@ jobs:
   build_project:
     docker:
       - image: haskell:8.4.3
+      - image: circleci/postgres:9.6.2-alpine
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: circle-test_test
     steps:
       - checkout
       - restore-cache:
-          keys: stack-work-{{checksum "stack.yaml"}}-{{checksum "package.yaml"}}
-      - run: sudo apt-get update && apt-get install --assume-yes curl gcc libgmp-dev libpq-dev make xz-utils zlib1g-dev
+          keys: stack-work-{{checksum "stack.yaml"}}-{{checksum "package.yaml"}}      
       - run: stack setup
       - run: stack build
       - run: stack test
