@@ -34,12 +34,15 @@ resolver: nightly-2018-07-24
 #  subdirs:
 #  - auto-update
 #  - wai
+allow-newer: true
 packages:
 - .
 # Dependency packages to be pulled from upstream that are not in the resolver
 # using the same syntax as the packages field.
 # (e.g., acme-missiles-0.3)
 # extra-deps: []
+extra-deps:
+- bloodhound-0.16.0.0
 # Override default flag values for local packages and extra-deps
 # flags: {}
 
@@ -63,3 +66,5 @@ packages:
 #
 # Allow a newer minor version of GHC than the snapshot specifies
 # compiler-check: newer-minor
+nix:
+  enable: false
