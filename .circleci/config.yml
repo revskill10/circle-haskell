@@ -10,8 +10,8 @@ jobs:
     steps:
       - checkout
       - restore-cache:
-          keys: stack-work-{{checksum "stack.yaml"}}-{{checksum "package.yaml"}}      
-      - run: sudo apt-get install libpq-dev
+          keys: stack-work-{{checksum "stack.yaml"}}-{{checksum "package.yaml"}}  
+      - run: apt-get install --assume-yes curl gcc libgmp-dev libpq-dev make xz-utils zlib1g-dev          
       - run: stack setup
       - run: stack build
       - run: stack test
