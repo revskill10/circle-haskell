@@ -24,6 +24,8 @@ dependencies:
 - servant-server
 - servant-auth-server
 - protolude
+- network-uri
+- containers
 
 library:
   source-dirs: 

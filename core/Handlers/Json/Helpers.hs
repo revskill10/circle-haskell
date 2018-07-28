@@ -1,4 +1,4 @@
-module Handlers.Reader.Helpers
+module Handlers.Json.Helpers
 where
 
 import           Control.Monad.IO.Class (MonadIO)
