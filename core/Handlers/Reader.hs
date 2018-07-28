@@ -11,8 +11,7 @@ import           Handlers.Reader.Helpers (checkJWT)
 import           Handlers.Types
 import           Servant.API
 import           Servant.Auth.Server     (AuthResult (..), throwAll)
-import           Servant.Server          hiding (Server)
-
+import           Servant.Server          (err401)
 type ReaderAPI = "ep1" :> Get '[JSON] Int
             :<|> "ep2" :> Get '[JSON] String
 readerServer :: AuthResult User -> Server ReaderAPI

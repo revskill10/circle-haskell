@@ -8,7 +8,6 @@ import           Handlers.Html.Types (Action, HtmlPage (..), Meta (..),
 import           Handlers.Types
 import           Miso                (ToServerRoutes)
 import           Servant.Auth.Server (AuthResult)
-import           Servant.Server      hiding (Server)
 
 type HtmlAPI = ToServerRoutes ViewRoutes HtmlPage Action
 

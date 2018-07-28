@@ -1,8 +1,6 @@
 {-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE FlexibleContexts  #-}
-{-# LANGUAGE KindSignatures    #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeApplications  #-}
 {-# LANGUAGE TypeOperators     #-}
 module Lib
     ( app
@@ -10,21 +8,19 @@ module Lib
     ) where
 
 import           Data.Proxy
-import           Env
 import           Handlers.Html
 import           Handlers.Login
 import           Handlers.Reader
+import           Handlers.Static
 import           Handlers.Types
-import           Network.Wai
 import           Servant.API
 import           Servant.Auth.Server
-import           Servant.Server             hiding (Server)
-import           Servant.Server.StaticFiles (serveDirectoryFileServer)
+import           Servant.Server      hiding (Server)
 
 
-type UnprotectedAPI = "login" :> LoginAPI :<|> Raw
+type UnprotectedAPI = "login" :> LoginAPI :<|> "static" :> StaticAPI
 unprotectedServer :: Server UnprotectedAPI
-unprotectedServer = loginServer :<|> serveDirectoryFileServer "client/static"
+unprotectedServer = loginServer :<|> staticServer
 
 type ProtectedAPI = "api" :> ReaderAPI :<|> HtmlAPI
 protectedServer :: AuthResult User -> Server ProtectedAPI

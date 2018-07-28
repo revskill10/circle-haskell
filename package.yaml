@@ -23,6 +23,7 @@ dependencies:
 - base >= 4.7 && < 5
 - servant-server
 - servant-auth-server
+- protolude
 
 library:
   source-dirs: 
@@ -44,6 +45,8 @@ library:
   - bloodhound
   - template-haskell
   - exceptions
+  - clay
+  - http-media
 
 executables:
   my-project-exe:
