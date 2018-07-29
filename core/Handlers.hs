@@ -1,9 +1,9 @@
 {-# LANGUAGE DataKinds        #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE TypeOperators    #-}
-module Lib
-    ( app
-    , User(..)
+module Handlers
+    ( API
+    , apiServer
     ) where
 
 import           Data.Proxy
@@ -14,8 +14,6 @@ import           Handlers.Static
 import           Handlers.Types
 import           Servant.API
 import           Servant.Auth.Server
-import           Servant.Server      hiding (Server)
-
 
 type UnprotectedAPI = "login" :> LoginAPI :<|> "static" :> StaticAPI
 unprotectedServer :: Server UnprotectedAPI
@@ -28,7 +26,3 @@ protectedServer a = jsonServer a :<|> htmlServer a
 type API auths = Auth auths User :> ProtectedAPI :<|> UnprotectedAPI
 apiServer :: Server (API auths)
 apiServer = protectedServer  :<|> unprotectedServer
-
-apiProxy = Proxy :: Proxy (API '[Cookie, JWT])
-
-app cfg ctx = serveWithContext apiProxy ctx (nt cfg apiProxy apiServer)

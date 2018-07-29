@@ -40,12 +40,6 @@ contextProxy = Proxy :: Proxy '[CookieSettings, JWTSettings]
 
 nt cfg api = hoistServerWithContext api contextProxy (transform cfg)
 
--- generateAppConfig :: IO (AppConfig, Context ctx)
-generateAppConfig = do
-  myKey <- generateKey
-  let jwtCfg = defaultJWTSettings myKey
-      cookieCfg = defaultCookieSettings
-      jsBase = "/static"
-      cfg = AppConfig { _jwtCfg = jwtCfg, _cookieCfg = cookieCfg, _jsBase = jsBase }
-      ctx = cookieCfg :. jwtCfg :. EmptyContext
-  return (cfg, ctx)
+
+
+

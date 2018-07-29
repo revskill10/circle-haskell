@@ -27,6 +27,7 @@ dependencies:
 - network-uri
 - containers
 - lens
+- wai
 
 library:
   source-dirs: 
@@ -35,7 +36,6 @@ library:
   dependencies:
   - mtl
   - servant
-  - wai
   - servant-auth
   - aeson
   - lucid
@@ -62,6 +62,7 @@ executables:
     dependencies:
     - my-project
     - warp
+    - wai-logger
  
 tests:
   my-project-test:

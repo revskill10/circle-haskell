@@ -1,10 +1,14 @@
 module Main where
 
-import           Handlers.Types           (generateAppConfig)
-import           Lib                      (app)
-import qualified Network.Wai.Handler.Warp as Wai
+import           App                      (app, generateAppConfig)
+import           Network.Wai
+import           Network.Wai.Handler.Warp
+import           Network.Wai.Logger       (withStdoutLogger)
 
 main :: IO ()
 main = do
     (cfg, ctx) <- generateAppConfig
-    Wai.run 3003 (Lib.app cfg ctx)
+    let mainApp = app cfg ctx
+    withStdoutLogger $ \aplogger -> do
+      let settings = setPort 3003 $ setLogger aplogger defaultSettings
+      runSettings settings mainApp
