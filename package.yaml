@@ -23,6 +23,10 @@ dependencies:
 - base >= 4.7 && < 5
 - servant-server
 - servant-auth-server
+- protolude
+- network-uri
+- containers
+- lens
 
 library:
   source-dirs: 
@@ -44,6 +48,8 @@ library:
   - bloodhound
   - template-haskell
   - exceptions
+  - clay
+  - http-media
 
 executables:
   my-project-exe:

@@ -1,34 +1,29 @@
-{-# LANGUAGE DataKinds         #-}
-{-# LANGUAGE FlexibleContexts  #-}
-{-# LANGUAGE KindSignatures    #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeApplications  #-}
-{-# LANGUAGE TypeOperators     #-}
+{-# LANGUAGE DataKinds        #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE TypeOperators    #-}
 module Lib
     ( app
     , User(..)
     ) where
 
 import           Data.Proxy
-import           Env
 import           Handlers.Html
+import           Handlers.Json
 import           Handlers.Login
-import           Handlers.Reader
+import           Handlers.Static
 import           Handlers.Types
-import           Network.Wai
 import           Servant.API
 import           Servant.Auth.Server
-import           Servant.Server             hiding (Server)
-import           Servant.Server.StaticFiles (serveDirectoryFileServer)
+import           Servant.Server      hiding (Server)
 
 
-type UnprotectedAPI = "login" :> LoginAPI :<|> Raw
+type UnprotectedAPI = "login" :> LoginAPI :<|> "static" :> StaticAPI
 unprotectedServer :: Server UnprotectedAPI
-unprotectedServer = loginServer :<|> serveDirectoryFileServer "client/static"
+unprotectedServer = loginServer :<|> staticServer
 
-type ProtectedAPI = "api" :> ReaderAPI :<|> HtmlAPI
+type ProtectedAPI = "api" :> JsonAPI :<|> HtmlAPI
 protectedServer :: AuthResult User -> Server ProtectedAPI
-protectedServer a = readerServer a :<|> htmlServer a
+protectedServer a = jsonServer a :<|> htmlServer a
 
 type API auths = Auth auths User :> ProtectedAPI :<|> UnprotectedAPI
 apiServer :: Server (API auths)
@@ -36,4 +31,4 @@ apiServer = protectedServer  :<|> unprotectedServer
 
 apiProxy = Proxy :: Proxy (API '[Cookie, JWT])
 
-app cookieCfg jwtCfg cfg = serveWithContext apiProxy cfg (nt (AppConfig cookieCfg jwtCfg) apiProxy apiServer)
+app cfg ctx = serveWithContext apiProxy ctx (nt cfg apiProxy apiServer)

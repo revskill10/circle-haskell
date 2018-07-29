@@ -7,12 +7,14 @@
 }:
 let
   result = import (pkgs.fetchFromGitHub {
-		owner = "dmjio";
-		repo = "miso";
-		sha256 = "15n813j9h8lszg8b0491s2nhpn3k37910h0hggc576rmdk74db5c";
-		rev = "c0a3ec5f6309cdff2b732507f6ce9db992da3cd3";
+		rev = "c756a6771a2da437f874645b1930e12d27127650";
+    sha256 = "06ra3imm65fxfw41nnns5hvhwpsr56kn13x27glv7g43vx8ny5y3";
+    owner = "dmjio";
+    repo = "miso";
   }) {};
-	inherit (pkgs) runCommand closurecompiler;
-in pkgs.haskell.packages.ghcjs.callPackage ./app.nix {
-  miso = result.miso-ghcjs;
-}
+	inherit (pkgs) closurecompiler;
+	miso = result.miso-ghcjs;
+in (pkgs.haskell.packages.ghcjs.callPackage ./home.nix {
+		miso = miso;
+	})
+	

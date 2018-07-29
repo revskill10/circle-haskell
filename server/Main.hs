@@ -1,14 +1,10 @@
 module Main where
 
+import           Handlers.Types           (generateAppConfig)
 import           Lib                      (app)
 import qualified Network.Wai.Handler.Warp as Wai
-import           Servant.Auth.Server
-import           Servant.Server           (Context (..))
 
 main :: IO ()
 main = do
-    myKey <- generateKey
-    let jwtCfg = defaultJWTSettings myKey
-        cookieCfg = defaultCookieSettings
-        cfg = cookieCfg :. jwtCfg :. EmptyContext
-    Wai.run 3003 (Lib.app cookieCfg jwtCfg cfg)
+    (cfg, ctx) <- generateAppConfig
+    Wai.run 3003 (Lib.app cfg ctx)

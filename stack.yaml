@@ -43,6 +43,8 @@ packages:
 # extra-deps: []
 extra-deps:
 - bloodhound-0.16.0.0
+- servant-0.14.1
+- miso-0.21.1.0
 # Override default flag values for local packages and extra-deps
 # flags: {}
 
