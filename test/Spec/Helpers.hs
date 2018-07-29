@@ -34,7 +34,7 @@ mkHeaders user jwtCfg = do
       Right jwt -> return $ headers jwt
 
 generateMockApp = do
-  (cfg, ctx) <- generateAppConfig
+  (cfg, ctx) <- generateAppConfig "/static"
   let testApp = app cfg ctx
       jwtCfg = _jwtCfg cfg
   return (testApp, jwtCfg)

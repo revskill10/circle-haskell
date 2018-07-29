@@ -28,6 +28,7 @@ dependencies:
 - containers
 - lens
 - wai
+- text
 
 library:
   source-dirs: 
@@ -40,7 +41,6 @@ library:
   - aeson
   - lucid
   - miso
-  - text
   - hedis
   - selda
   - selda-sqlite
@@ -79,7 +79,6 @@ tests:
     - hspec-wai-json
     - http-types
     - jose
-    - text
     - bytestring
     - lucid
     
