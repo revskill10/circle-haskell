@@ -31,4 +31,4 @@ apiServer = protectedServer  :<|> unprotectedServer
 
 apiProxy = Proxy :: Proxy (API '[Cookie, JWT])
 
-app cookieCfg jwtCfg cfg = serveWithContext apiProxy cfg (nt (AppConfig cookieCfg jwtCfg) apiProxy apiServer)
+app cfg ctx = serveWithContext apiProxy ctx (nt cfg apiProxy apiServer)

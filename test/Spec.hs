@@ -10,7 +10,7 @@ import qualified Data.String            as DS
 import qualified Data.Text              as T
 import qualified Data.Text.Encoding     as TE
 import qualified Data.Text.Lazy         as TL
-import           Env                    (getEnv)
+import           Handlers.Types         (generateAppConfig, _jwtCfg)
 import           Lib                    (User (..), app)
 import qualified Lucid                  as L
 import qualified Lucid.Base             as L
@@ -24,8 +24,8 @@ import           Test.Hspec.Wai.Matcher
 
 main :: IO ()
 main = do
-  myKey <- generateKey
-  hspec (spec "hi" myKey)
+  (cfg, ctx) <- generateAppConfig
+  hspec (spec cfg ctx)
 
 bearerType jwt = BC.pack "Bearer " <> BL.toStrict jwt
 
@@ -47,12 +47,9 @@ mkHeaders user jwtCfg = do
     Left _    -> return $ headers ""
     Right jwt -> return $ headers jwt
 
-spec :: String -> JWK  -> Spec
-spec dbConf myKey = do
-  let jwtCfg = defaultJWTSettings myKey
-      cookieCfg = defaultCookieSettings
-      cfg = cookieCfg :. jwtCfg :. EmptyContext
-  with (return (app cookieCfg jwtCfg cfg)) $
+spec cfg ctx =
+  with (return (app cfg ctx)) $ do
+    let jwtCfg = _jwtCfg cfg
     describe "Protected API" $ do
       it "responds with 401" $ do
         header <- liftIO $ mkHeaders invalidUser jwtCfg
