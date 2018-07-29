@@ -1,6 +1,5 @@
-{-# LANGUAGE DataKinds         #-}
-{-# LANGUAGE FlexibleContexts  #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DataKinds        #-}
+{-# LANGUAGE FlexibleContexts #-}
 module App
 (
   module Handlers.Types
@@ -21,11 +20,10 @@ apiProxy = Proxy :: Proxy (API '[Cookie, JWT])
 app cfg ctx = serveWithContext apiProxy ctx (nt cfg apiProxy apiServer)
 
 -- generateAppConfig :: IO (AppConfig, Context ctx)
-generateAppConfig = do
+generateAppConfig jsBase = do
   myKey <- generateKey
   let jwtCfg = defaultJWTSettings myKey
       cookieCfg = defaultCookieSettings
-      jsBase = "/static"
       cfg = AppConfig { _jwtCfg = jwtCfg, _cookieCfg = cookieCfg, _jsBase = jsBase }
       ctx = cookieCfg :. jwtCfg :. EmptyContext
   return (cfg, ctx)

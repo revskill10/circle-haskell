@@ -14,7 +14,6 @@ let
   }) {};
 	inherit (pkgs) closurecompiler;
 	miso = result.miso-ghcjs;
-in (pkgs.haskell.packages.ghcjs.callPackage ./home.nix {
-		miso = miso;
-	})
-	
+in { 
+	home = pkgs.haskell.packages.ghcjs.callPackage ./home.nix { miso = miso; };
+}  

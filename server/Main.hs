@@ -1,14 +1,14 @@
 module Main where
 
-import           App                      (app, generateAppConfig)
 import           Network.Wai
 import           Network.Wai.Handler.Warp
 import           Network.Wai.Logger       (withStdoutLogger)
+import           Server.Helpers
 
 main :: IO ()
 main = do
-    (cfg, ctx) <- generateAppConfig
-    let mainApp = app cfg ctx
+    mainApp <- generateServerApp
+    port <- fetchPort 3003
     withStdoutLogger $ \aplogger -> do
-      let settings = setPort 3003 $ setLogger aplogger defaultSettings
+      let settings = setPort port $ setLogger aplogger defaultSettings
       runSettings settings mainApp

@@ -23,7 +23,6 @@ instance ToJWT User
 instance FromJSON User
 instance FromJWT User
 
-
 data AppConfig = AppConfig {
     _cookieCfg :: CookieSettings
   , _jwtCfg    :: JWTSettings
