@@ -17,7 +17,7 @@ import           Control.Lens  hiding (view)
 -- | Sum type for application events
 main :: IO ()
 main =
-  Miso.miso $ \currentURI -> App
+  Miso.miso $ const App
     { initialAction = SayHelloWorld
     , model         = initialModel
     , update        = fromTransition . updateModel
